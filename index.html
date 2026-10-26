@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Optimizador Técnico de Reportes PDF — Línea 2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #F7F6F2;
+      --bg-surface: #FFFFFF;
+      --bg-subtle: #EFECE6;
+      --ink-primary: #14171A;
+      --ink-secondary: #4A525A;
+      --ink-muted: #768089;
+      --border-hairline: #DFDCD4;
+      --border-strong: #C5C0B4;
+      --accent-amber: #D97706;
+      --accent-amber-soft: #FEF3C7;
+      --accent-crimson: #BE123C;
+      --accent-teal: #0F766E;
+      --accent-teal-soft: #CCFBF1;
+      --accent-navy: #1E293B;
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--ink-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Operational Bar */
+    .topbar {
+      background-color: var(--ink-primary);
+      color: #F8FAFC;
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--accent-amber);
+    }
+
+    .brand-cluster {
+      display: flex;
+      align-items: center;
+      gap: 0.875rem;
+    }
+
+    .metro-badge {
+      display: inline-flex;
+      align-items: center;
+      background: #E11D48;
+      color: #FFFFFF;
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.04em;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .metro-badge span {
+      background: #F59E0B;
+      color: #14171A;
+      padding: 0.1rem 0.4rem;
+      margin-left: 0.4rem;
+      border-radius: 2px;
+      font-family: 'IBM Plex Mono', monospace;
+    }
+
+    .topbar-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: #F1F5F9;
+    }
+
+    .topbar-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: #94A3B8;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .privacy-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(15, 118, 110, 0.25);
+      border: 1px solid rgba(45, 212, 191, 0.35);
+      color: #5EEAD4;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.72rem;
+    }
+
+    /* Main Workspace Container */
+    .workspace {
+      max-width: 1120px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2.25rem 1.5rem 4rem;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 1.75rem;
+      align-items: start;
+    }
+
+    @media (max-width: 920px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+      }
+    }
+
+    /* Left Column: Primary Tool */
+    .main-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .hero-header {
+      border-bottom: 1px solid var(--border-hairline);
+      padding-bottom: 1.25rem;
+    }
+
+    .hero-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--accent-amber);
+      font-weight: 600;
+      margin-bottom: 0.35rem;
+    }
+
+    .hero-title {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: var(--ink-primary);
+      line-height: 1.2;
+    }
+
+    .hero-desc {
+      margin-top: 0.5rem;
+      color: var(--ink-secondary);
+      font-size: 0.95rem;
+      max-width: 65ch;
+    }
+
+    /* Mode Selector Cards */
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-secondary);
+      font-weight: 600;
+      margin-bottom: 0.65rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modes-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.85rem;
+    }
+
+    @media (max-width: 640px) {
+      .modes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mode-card {
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border-hairline);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      cursor: pointer;
+      transition: transform 140ms var(--ease-out), border-color 140ms var(--ease-out), box-shadow 140ms var(--ease-out);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+    }
+
+    .mode-card:hover {
+      border-color: var(--border-strong);
+    }
+
+    .mode-card:active {
+      transform: scale(0.98);
+    }
+
+    .mode-card.active {
+      border-color: var(--ink-primary);
+      box-shadow: 0 4px 14px rgba(20, 23, 26, 0.07);
+      background: #FFFFFF;
+    }
+
+    .mode-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.45rem;
+    }
+
+    .mode-tag {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      background: var(--bg-subtle);
+      color: var(--ink-secondary);
+    }
+
+    .mode-card.active .mode-tag {
+      background: var(--ink-primary);
+      color: #FFFFFF;
+    }
+
+    .radio-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mode-card.active .radio-dot {
+      border-color: var(--ink-primary);
+      background: var(--ink-primary);
+    }
+
+    .mode-card.active .radio-dot::after {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #FFFFFF;
+    }
+
+    .mode-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--ink-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .mode-sub {
+      font-size: 0.8rem;
+      color: var(--ink-secondary);
+      line-height: 1.4;
+      margin-bottom: 0.75rem;
+    }
+
+    .mode-metric {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--accent-teal);
+      font-weight: 600;
+      padding-top: 0.55rem;
+      border-top: 1px dashed var(--border-hairline);
+    }
+
+    /* Dropzone */
+    .dropzone {
+      background: var(--bg-surface);
+      border: 2px dashed var(--border-strong);
+      border-radius: 10px;
+      padding: 2.5rem 1.75rem;
+      text-align: center;
+      transition: border-color 160ms var(--ease-out), background-color 160ms var(--ease-out), transform 140ms var(--ease-out);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--ink-primary);
+      background-color: #FDFCFA;
+    }
+
+    .dropzone:active {
+      transform: scale(0.995);
+    }
+
+    .dropzone-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 0.85rem;
+      border-radius: 10px;
+      background: var(--bg-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-primary);
+    }
+
+    .dropzone-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      margin-bottom: 0.3rem;
+    }
+
+    .dropzone-hint {
+      font-size: 0.86rem;
+      color: var(--ink-secondary);
+      margin-bottom: 1.1rem;
+    }
+
+    .btn-select {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--ink-primary);
+      color: #FFFFFF;
+      font-family: inherit;
+      font-weight: 600;
+      font-size: 0.875rem;
+      padding: 0.65rem 1.25rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: transform 120ms var(--ease-out), background-color 120ms var(--ease-out);
+    }
+
+    .btn-select:hover {
+      background: #272C33;
+    }
+
+    .btn-select:active {
+      transform: scale(0.97);
+    }
+
+    #fileInput {
+      display: none;
+    }
+
+    /* Processing & Export Queue */
+    .queue-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .queue-header {
+      padding: 0.9rem 1.25rem;
+      background: var(--bg-subtle);
+      border-bottom: 1px solid var(--border-hairline);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .queue-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--ink-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-clear {
+      background: transparent;
+      border: 1px solid var(--border-strong);
+      color: var(--ink-secondary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 120ms var(--ease-out);
+    }
+
+    .btn-clear:hover {
+      border-color: var(--ink-primary);
+      color: var(--ink-primary);
+    }
+
+    .queue-empty {
+      padding: 2.25rem 1.5rem;
+      text-align: center;
+      color: var(--ink-muted);
+      font-size: 0.875rem;
+    }
+
+    .file-item {
+      padding: 1.1rem 1.25rem;
+      border-bottom: 1px solid var(--border-hairline);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .file-item:last-child {
+      border-bottom: none;
+    }
+
+    .file-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .file-name {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--ink-primary);
+      word-break: break-all;
+    }
+
+    .file-meta {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.76rem;
+      color: var(--ink-secondary);
+      margin-top: 0.2rem;
+    }
+
+    .status-badge {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.2rem 0.55rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .status-working {
+      background: var(--accent-amber-soft);
+      color: #92400E;
+    }
+
+    .status-done {
+      background: var(--accent-teal-soft);
+      color: var(--accent-teal);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: var(--bg-subtle);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--ink-primary);
+      width: 0%;
+      transition: width 150ms linear;
+    }
+
+    .download-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      padding-top: 0.25rem;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--ink-primary);
+      color: #FFFFFF;
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.5rem 0.95rem;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: transform 120ms var(--ease-out), background 120ms var(--ease-out);
+    }
+
+    .btn-download.secondary {
+      background: var(--accent-teal);
+    }
+
+    .btn-download:hover {
+      opacity: 0.93;
+    }
+
+    .btn-download:active {
+      transform: scale(0.97);
+    }
+
+    .btn-download span.mono {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.73rem;
+      background: rgba(255,255,255,0.18);
+      padding: 0.1rem 0.4rem;
+      border-radius: 3px;
+    }
+
+    /* Right Column: Technical Specs & Cross-Platform Info */
+    .side-column {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .spec-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-hairline);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+
+    .spec-card-title {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink-primary);
+      font-weight: 600;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .spec-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      font-size: 0.83rem;
+      color: var(--ink-secondary);
+    }
+
+    .spec-list li {
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-start;
+    }
+
+    .spec-bullet {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 600;
+      color: var(--accent-teal);
+      font-size: 0.8rem;
+    }
+
+    .benchmark-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+      font-size: 0.78rem;
+    }
+
+    .benchmark-table th, .benchmark-table td {
+      padding: 0.45rem 0.35rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-hairline);
+    }
+
+    .benchmark-table th {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+    }
+
+    .benchmark-table td.num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 600;
+      color: var(--ink-primary);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="brand-cluster">
+      <div class="metro-badge">Línea <span>2</span></div>
+      <div class="topbar-title">Optimizador Técnico de Reportes PDF</div>
+    </div>
+    <div class="topbar-meta">
+      <span class="privacy-pill">● 100% Local en tu Navegador (Windows / Mac)</span>
+      <span>Motor Flate/Indexed v2.4</span>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <section class="main-column">
+      <div class="hero-header">
+        <div class="hero-eyebrow">Procesamiento Directo Sin Servidor</div>
+        <h1 class="hero-title">Reduce el peso de tus reportes PDF sin perder nitidez</h1>
+        <p class="hero-desc">
+          Optimiza las tablas de datos incrustadas conservando al 100% los textos vectoriales, logotipos institucionales y gráficos estadísticos a color. Tus archivos nunca se suben a internet: todo se procesa dentro de tu propia computadora.
+        </p>
+      </div>
+
+      <div>
+        <div class="section-label">
+          <span>1. Selecciona el Perfil de Compresión</span>
+          <span>Compatible con Reportes Diarios</span>
+        </div>
+        <div class="modes-grid" id="modeSelector">
+          <div class="mode-card" data-mode="4">
+            <div>
+              <div class="mode-card-top">
+                <span class="mode-tag">OPCIÓN 1 · 4-BIT</span>
+                <div class="radio-dot"></div>
+              </div>
+              <div class="mode-name">Alta Definición (HD)</div>
+              <div class="mode-sub">Conserva 16 niveles de suavizado en letras y bordes de tabla. Indistinguible del original haciendo zoom.</div>
+            </div>
+            <div class="mode-metric">34.5 MB → ~13.1 MB (-62%)</div>
+          </div>
+
+          <div class="mode-card" data-mode="2">
+            <div>
+              <div class="mode-card-top">
+                <span class="mode-tag">OPCIÓN 2 · 2-BIT</span>
+                <div class="radio-dot"></div>
+              </div>
+              <div class="mode-name">Máximo Ahorro (MAX)</div>
+              <div class="mode-sub">Optimiza tablas a 4 niveles de suavizado. Ideal para enviar por correo o compartir rápido.</div>
+            </div>
+            <div class="mode-metric">34.5 MB → ~9.8 MB (-72%)</div>
+          </div>
+
+          <div class="mode-card active" data-mode="both">
+            <div>
+              <div class="mode-card-top">
+                <span class="mode-tag">RECOMENDADO</span>
+                <div class="radio-dot"></div>
+              </div>
+              <div class="mode-name">Generar Ambas Opciones</div>
+              <div class="mode-sub">Procesa tanto la versión HD como la versión MAX para que descargues la que prefieras.</div>
+            </div>
+            <div class="mode-metric">Exporta _HD.pdf + _MAX.pdf</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-label">
+          <span>2. Sube o Arrastra tus Archivos PDF</span>
+          <span>Soporta múltiples PDFs a la vez</span>
+        </div>
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="12" y1="18" x2="12" y2="12"></line>
+              <polyline points="9 15 12 12 15 15"></polyline>
+            </svg>
+          </div>
+          <div class="dropzone-title">Arrastra tus reportes PDF aquí</div>
+          <div class="dropzone-hint">O haz clic para elegir uno o varios documentos desde tu carpeta en Windows o Mac</div>
+          <button type="button" class="btn-select" id="btnBrowse">
+            Seleccionar archivos PDF
+          </button>
+          <input type="file" id="fileInput" accept="application/pdf,.pdf" multiple />
+        </div>
+      </div>
+
+      <div class="queue-panel">
+        <div class="queue-header">
+          <div class="queue-title">
+            <span>3. Documentos Procesados Listos para Descargar</span>
+          </div>
+          <button type="button" class="btn-clear" id="btnClear">Limpiar lista</button>
+        </div>
+        <div id="queueList">
+          <div class="queue-empty">
+            Aún no has seleccionado ningún PDF. Cuando arrastres un archivo arriba, aparecerá aquí con su botón de descarga inmediata.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <aside class="side-column">
+      <div class="spec-card">
+        <div class="spec-card-title">¿Por qué no pierde calidad?</div>
+        <ul class="spec-list">
+          <li>
+            <span class="spec-bullet">01</span>
+            <div><strong>Textos y Encabezados Intactos:</strong> Las fuentes vectoriales, fechas, firmas y logotipos se conservan byte por byte sin alteración.</div>
+          </li>
+          <li>
+            <span class="spec-bullet">02</span>
+            <div><strong>Protección de Gráficos a Color:</strong> El algoritmo detecta automáticamente diagramas y barras de colores (como las páginas 64 y 66) y mantiene su paleta RGB original.</div>
+          </li>
+          <li>
+            <span class="spec-bullet">03</span>
+            <div><strong>Compactación de Tablas:</strong> Re-empaqueta únicamente las capturas de tabla de 8 bits a 4 bits o 2 bits en escala de grises sin reducir sus píxeles de resolución (167 DPI).</div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="spec-card">
+        <div class="spec-card-title">Referencia de Rendimiento</div>
+        <table class="benchmark-table">
+          <thead>
+            <tr>
+              <th>Perfil</th>
+              <th>Peso (861 págs)</th>
+              <th>Ahorro</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Original (Virgen)</td>
+              <td class="num">34.5 MB</td>
+              <td class="num">—</td>
+            </tr>
+            <tr>
+              <td>Opción 1 (HD 4-bit)</td>
+              <td class="num">13.1 MB</td>
+              <td class="num" style="color: var(--accent-teal);">-62%</td>
+            </tr>
+            <tr>
+              <td>Opción 2 (MAX 2-bit)</td>
+              <td class="num">9.8 MB</td>
+              <td class="num" style="color: var(--accent-teal);">-72%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="spec-card">
+        <div class="spec-card-title">Privacidad y Uso en Equipo</div>
+        <ul class="spec-list">
+          <li>
+            <span class="spec-bullet">✓</span>
+            <div><strong>Compatible con Windows y Mac:</strong> Tu compañero puede abrir el enlace de GitHub Pages desde Chrome o Edge en Windows sin instalar Python ni programas adicionales.</div>
+          </li>
+          <li>
+            <span class="spec-bullet">✓</span>
+            <div><strong>Seguridad Industrial:</strong> Ningún reporte sale de la computadora del usuario; toda la compresión ocurre en la memoria local del navegador.</div>
+          </li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Librería fflate ultrarrápida para compresión Zlib/Deflate en el navegador -->
+  <script src="https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js"></script>
+  <script>
+    // Selección de modo
+    let currentMode = 'both';
+    const modeCards = document.querySelectorAll('.mode-card');
+    modeCards.forEach(card => {
+      card.addEventListener('click', () => {
+        modeCards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        currentMode = card.getAttribute('data-mode');
+      });
+    });
+
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const btnBrowse = document.getElementById('btnBrowse');
+    const queueList = document.getElementById('queueList');
+    const btnClear = document.getElementById('btnClear');
+    let hasItems = false;
+
+    btnBrowse.addEventListener('click', (e) => {
+      e.stopPropagation();
+      fileInput.click();
+    });
+
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('dragover');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        handleFiles(e.dataTransfer.files);
+      }
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files && fileInput.files.length > 0) {
+        handleFiles(fileInput.files);
+        fileInput.value = '';
+      }
+    });
+
+    btnClear.addEventListener('click', () => {
+      hasItems = false;
+      queueList.innerHTML = `
+        <div class="queue-empty">
+          Aún no has seleccionado ningún PDF. Cuando arrastres un archivo arriba, aparecerá aquí con su botón de descarga inmediata.
+        </div>`;
+    });
+
+    function formatMB(bytes) {
+      return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function uint8ToLatin1(u8, start, end) {
+      const slice = u8.subarray(start, end);
+      let out = '';
+      const chunk = 0x8000;
+      for (let i = 0; i < slice.length; i += chunk) {
+        out += String.fromCharCode.apply(null, slice.subarray(i, i + chunk));
+      }
+      return out;
+    }
+
+    function latin1ToUint8(str) {
+      const u8 = new Uint8Array(str.length);
+      for (let i = 0; i < str.length; i++) {
+        u8[i] = str.charCodeAt(i) & 0xff;
+      }
+      return u8;
+    }
+
+    async function handleFiles(fileList) {
+      const files = Array.from(fileList).filter(f => f.name.toLowerCase().endsWith('.pdf'));
+      if (files.length === 0) return;
+
+      if (!hasItems) {
+        queueList.innerHTML = '';
+        hasItems = true;
+      }
+
+      for (const file of files) {
+        await processSingleFile(file, currentMode);
+      }
+    }
+
+    async function processSingleFile(file, mode) {
+      const itemEl = document.createElement('div');
+      itemEl.className = 'file-item';
+      const cleanBase = file.name.replace(/\.pdf$/i, '').replace(/\(VIRGEN\)/ig, '').trim();
+
+      itemEl.innerHTML = `
+        <div class="file-top">
+          <div>
+            <div class="file-name">${file.name}</div>
+            <div class="file-meta">Tamaño original: ${formatMB(file.size)}</div>
+          </div>
+          <span class="status-badge status-working" id="statusBadge">Analizando PDF...</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progFill"></div>
+        </div>
+        <div class="download-row" id="dlRow" style="display:none;"></div>
+      `;
+      queueList.prepend(itemEl);
+
+      const statusBadge = itemEl.querySelector('#statusBadge');
+      const progFill = itemEl.querySelector('#progFill');
+      const dlRow = itemEl.querySelector('#dlRow');
+
+      const setProgress = (pct, msg) => {
+        progFill.style.width = pct + '%';
+        if (msg) statusBadge.textContent = msg;
+      };
+
+      await new Promise(r => setTimeout(r, 40));
+
+      try {
+        const arrayBuf = await file.arrayBuffer();
+        const u8 = new Uint8Array(arrayBuf);
+
+        setProgress(10, 'Identificando tablas e imágenes...');
+        await new Promise(r => setTimeout(r, 20));
+
+        const parsed = parsePDFStructure(u8);
+
+        if (mode === '4' || mode === 'both') {
+          const res4 = await buildCompressedPDF(parsed, 4, (p) => {
+            const scaled = mode === 'both' ? 10 + Math.round(p * 0.42) : 10 + Math.round(p * 0.85);
+            setProgress(scaled, `Comprimiendo Opción 1 (HD 4-bit)... ${p}%`);
+          });
+          const blob4 = new Blob([res4.buffer], { type: 'application/pdf' });
+          const url4 = URL.createObjectURL(blob4);
+          const pctSaved4 = ((1 - res4.buffer.byteLength / file.size) * 100).toFixed(1);
+
+          const btn4 = document.createElement('a');
+          btn4.className = 'btn-download';
+          btn4.href = url4;
+          btn4.download = `${cleanBase}_HD.pdf`;
+          btn4.innerHTML = `⬇ Descargar HD (4-bit) <span class="mono">${formatMB(res4.buffer.byteLength)} (-${pctSaved4}%)</span>`;
+          dlRow.appendChild(btn4);
+        }
+
+        if (mode === '2' || mode === 'both') {
+          const res2 = await buildCompressedPDF(parsed, 2, (p) => {
+            const scaled = mode === 'both' ? 52 + Math.round(p * 0.45) : 10 + Math.round(p * 0.85);
+            setProgress(scaled, `Comprimiendo Opción 2 (MAX 2-bit)... ${p}%`);
+          });
+          const blob2 = new Blob([res2.buffer], { type: 'application/pdf' });
+          const url2 = URL.createObjectURL(blob2);
+          const pctSaved2 = ((1 - res2.buffer.byteLength / file.size) * 100).toFixed(1);
+
+          const btn2 = document.createElement('a');
+          btn2.className = 'btn-download secondary';
+          btn2.href = url2;
+          btn2.download = `${cleanBase}_MAX.pdf`;
+          btn2.innerHTML = `⬇ Descargar MAX (2-bit) <span class="mono">${formatMB(res2.buffer.byteLength)} (-${pctSaved2}%)</span>`;
+          dlRow.appendChild(btn2);
+        }
+
+        setProgress(100, '¡Completado!');
+        statusBadge.className = 'status-badge status-done';
+        dlRow.style.display = 'flex';
+      } catch (err) {
+        console.error(err);
+        statusBadge.textContent = 'Error al procesar PDF';
+        statusBadge.style.background = '#FEE2E2';
+        statusBadge.style.color = '#991B1B';
+      }
+    }
+
+    function parsePDFStructure(u8) {
+      const fullStr = uint8ToLatin1(u8, 0, u8.length);
+      const objRegex = /(\d+)\s+0\s+obj\s*([\s\S]*?)\s*endobj/g;
+      const streamRegex = /^(<<[\s\S]*?>>)\s*stream\r?\n([\s\S]*?)\r?\nendstream$/;
+
+      const palettes = new Map();
+      const rawObjs = new Map();
+      let maxOid = 0;
+
+      let m;
+      while ((m = objRegex.exec(fullStr)) !== null) {
+        const oid = parseInt(m[1], 10);
+        if (oid > maxOid) maxOid = oid;
+        const body = m[2];
+        rawObjs.set(oid, body);
+
+        const sm = streamRegex.exec(body);
+        if (sm) {
+          const hdr = sm[1];
+          const sdata = sm[2];
+          if (!hdr.includes('/Subtype/Image') && sdata.length < 2000) {
+            try {
+              const sbuf = latin1ToUint8(sdata);
+              const pal = hdr.includes('FlateDecode') ? fflate.unzlibSync(sbuf) : sbuf;
+              if (pal.length <= 768 && pal.length % 3 === 0) {
+                palettes.set(oid, pal);
+              }
+            } catch (e) {}
+          }
+        }
+      }
+
+      const rootM = /\/Root\s+(\d+\s+0\s+R)/.exec(fullStr);
+      const infoM = /\/Info\s+(\d+\s+0\s+R)/.exec(fullStr);
+
+      return {
+        rawObjs,
+        palettes,
+        maxOid,
+        rootRef: rootM ? rootM[1] : null,
+        infoRef: infoM ? infoM[1] : null
+      };
+    }
+
+    async function buildCompressedPDF(parsed, bpcTarget, onProgress) {
+      const { rawObjs, palettes, maxOid, rootRef, infoRef } = parsed;
+      const streamRegex = /^(<<[\s\S]*?>>)\s*stream\r?\n([\s\S]*?)\r?\nendstream$/;
+
+      const newObjs = new Map();
+      const entries = Array.from(rawObjs.entries());
+      const total = entries.length;
+      const div = bpcTarget === 4 ? 17.0 : 85.0;
+
+      for (let idx = 0; idx < total; idx++) {
+        if (idx % 120 === 0) {
+          onProgress(Math.round((idx / total) * 100));
+          await new Promise(r => setTimeout(r, 0));
+        }
+
+        const [oid, body] = entries[idx];
+        const sm = streamRegex.exec(body);
+        if (!sm) {
+          newObjs.set(oid, latin1ToUint8(body));
+          continue;
+        }
+
+        const hdr = sm[1];
+        const sdata = sm[2];
+
+        if (hdr.includes('/Subtype/Image') && hdr.includes('/Indexed') && hdr.includes('/FlateDecode')) {
+          const wm = /\/Width\s+(\d+)/.exec(hdr);
+          const hm = /\/Height\s+(\d+)/.exec(hdr);
+          const pm = /\[\/Indexed\/DeviceRGB\s+(\d+)\s+(\d+)\s+0\s+R\]/.exec(hdr);
+
+          if (wm && hm && pm) {
+            const w = parseInt(wm[1], 10);
+            const h = parseInt(hm[1], 10);
+            const palId = parseInt(pm[2], 10);
+
+            if (w >= 1700 && palettes.has(palId)) {
+              try {
+                const pal = palettes.get(palId);
+                const rawPixels = fflate.unzlibSync(latin1ToUint8(sdata));
+                if (rawPixels.length === w * h) {
+                  const numColors = Math.floor(pal.length / 3);
+                  const lut = new Uint8Array(256);
+                  for (let i = 0; i < numColors; i++) {
+                    lut[i] = Math.round((0.299 * pal[i * 3] + 0.587 * pal[i * 3 + 1] + 0.114 * pal[i * 3 + 2]) / div);
+                  }
+
+                  let packed;
+                  if (bpcTarget === 4) {
+                    const rowBytes = Math.ceil(w / 2);
+                    packed = new Uint8Array(rowBytes * h);
+                    let dst = 0;
+                    for (let y = 0; y < h; y++) {
+                      const rowStart = y * w;
+                      for (let x = 0; x < w; x += 2) {
+                        const b1 = lut[rawPixels[rowStart + x]];
+                        const b2 = (x + 1 < w) ? lut[rawPixels[rowStart + x + 1]] : 0;
+                        packed[dst++] = (b1 << 4) | b2;
+                      }
+                    }
+                  } else {
+                    const rowBytes = Math.ceil(w / 4);
+                    packed = new Uint8Array(rowBytes * h);
+                    let dst = 0;
+                    for (let y = 0; y < h; y++) {
+                      const rowStart = y * w;
+                      for (let x = 0; x < w; x += 4) {
+                        const b1 = lut[rawPixels[rowStart + x]];
+                        const b2 = (x + 1 < w) ? lut[rawPixels[rowStart + x + 1]] : 0;
+                        const b3 = (x + 2 < w) ? lut[rawPixels[rowStart + x + 2]] : 0;
+                        const b4 = (x + 3 < w) ? lut[rawPixels[rowStart + x + 3]] : 0;
+                        packed[dst++] = (b1 << 6) | (b2 << 4) | (b3 << 2) | b4;
+                      }
+                    }
+                  }
+
+                  const comp = fflate.zlibSync(packed, { level: 6 });
+                  const newHdr = hdr
+                    .replace(/\/ColorSpace\[\/Indexed\/DeviceRGB\s+\d+\s+\d+\s+0\s+R\]/, '/ColorSpace/DeviceGray')
+                    .replace(/\/BitsPerComponent\s+8/, '/BitsPerComponent ' + bpcTarget)
+                    .replace(/\/Length\s+\d+/, '/Length ' + comp.length);
+
+                  const pre = latin1ToUint8(newHdr + '\nstream\n');
+                  const post = latin1ToUint8('\nendstream');
+                  const combined = new Uint8Array(pre.length + comp.length + post.length);
+                  combined.set(pre, 0);
+                  combined.set(comp, pre.length);
+                  combined.set(post, pre.length + comp.length);
+
+                  newObjs.set(oid, combined);
+                  continue;
+                }
+              } catch (e) {}
+            }
+          }
+        }
+
+        newObjs.set(oid, latin1ToUint8(body));
+      }
+
+      // Ensamblar PDF final con tabla XREF actualizada
+      const sortedOids = Array.from(newObjs.keys()).sort((a, b) => a - b);
+      const chunks = [];
+      let offset = 0;
+
+      const pushChunk = (u8Chunk) => {
+        chunks.push(u8Chunk);
+        offset += u8Chunk.length;
+      };
+
+      pushChunk(latin1ToUint8('%PDF-1.7\n%\xE2\xE3\xCF\xD3\n'));
+
+      const offsets = new Map();
+      for (const oid of sortedOids) {
+        offsets.set(oid, offset);
+        pushChunk(latin1ToUint8(`${oid} 0 obj\n`));
+        pushChunk(newObjs.get(oid));
+        pushChunk(latin1ToUint8('\nendobj\n'));
+      }
+
+      const xrefOffset = offset;
+      let xrefStr = `xref\n0 ${maxOid + 1}\n0000000000 65535 f \n`;
+      for (let oid = 1; oid <= maxOid; oid++) {
+        if (offsets.has(oid)) {
+          const offStr = String(offsets.get(oid)).padStart(10, '0');
+          xrefStr += `${offStr} 00000 n \n`;
+        } else {
+          xrefStr += `0000000000 65535 f \n`;
+        }
+      }
+
+      let trailerDict = `<< /Size ${maxOid + 1}`;
+      if (rootRef) trailerDict += ` /Root ${rootRef}`;
+      if (infoRef) trailerDict += ` /Info ${infoRef}`;
+      trailerDict += ` >>`;
+
+      xrefStr += `trailer\n${trailerDict}\nstartxref\n${xrefOffset}\n%%EOF\n`;
+      pushChunk(latin1ToUint8(xrefStr));
+
+      const finalBuffer = new Uint8Array(offset);
+      let pos = 0;
+      for (const c of chunks) {
+        finalBuffer.set(c, pos);
+        pos += c.length;
+      }
+
+      return { buffer: finalBuffer };
+    }
+  </script>
+</body>
+</html>

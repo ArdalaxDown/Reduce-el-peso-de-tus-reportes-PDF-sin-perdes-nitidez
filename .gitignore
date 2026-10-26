@@ -1,0 +1,8 @@
+# Ignorar archivos temporales y PDFs pesados locales
+.DS_Store
+__pycache__/
+*.pyc
+1_Entrada/*.pdf
+2_Comprimidos/*.pdf
+3_Originales_Procesados/*.pdf
+*.pdf
